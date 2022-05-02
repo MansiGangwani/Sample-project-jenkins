@@ -1,6 +1,6 @@
 def maximum():
-    a=int(input("Enter A: "))
-    b=int(input("Enter B: "))
+    a=6
+    b=4
     if(a>b):
         print("Maximum no(A): ",a)
     else:
