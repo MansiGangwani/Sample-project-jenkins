@@ -1,8 +1,20 @@
+"""
+    Program of find maximum number
+"""
 def maximum():
-    a=6
-    b=4
-    if(a>b):
-        print("Maximum no(A): ",a)
+    """
+       Function of maximum number
+    """
+    print("Maximum of two numbers")
+    print("======================")
+    no1 = 6
+    no2 = 4
+    print("no1: ", no1, "   ", "no2:", no2)
+
+    if no1 > no2:
+        print("Mno1ximum no(no1): ", no1)
     else:
-        print("Maximum no(B): ",b)
+        print("Mno1ximum no(no2): ", no2)
+
+
 maximum()
