@@ -19,7 +19,7 @@ pipeline
         {
             steps
             {
-                sh 'python3 MaxNumberUser.py'
+                sh 'python3 MaxNumberUser.py $no1 $no2'
             }
         }
     }
