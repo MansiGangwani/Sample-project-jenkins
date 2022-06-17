@@ -1,0 +1,33 @@
+General rules:
+ - follow PEP8 coding standards
+ - pylint score should be >8
+ - should be python 3.8 compatible
+
+
+1. Write a python program which will take one string input parameter as command line argument. Validate that input string satisfy below checks:
+    - one word only
+    - letters and numbers only
+    - max length 255 chars
+   show error message for invalid inputs. Print "PASS" if the input string is palindrome otherwise "FAIL".
+
+2. Write a generic class for file input/output operations. This class should contain methods for file read, file write and file append.
+Derive a child class from this class which will take a file name and a string as input parameter. It should write the string to the file using parent class’ methods read/write. Verify the file’s content after each operation. Also handle exceptions in the code.
+ 
+3. Write a program in python to fire following APIs and verify proper status code:
+    a. get : http://jsonplaceholder.typicode.com/users 
+        From the response print username and email for all users
+    b. post : http://jsonplaceholder.typicode.com/posts
+        Verify the status code is 201 and print the id from the response
+    c. delete : http://jsonplaceholder.typicode.com/posts/1
+        Verify the status code is 200
+
+4. Write a utility to copy specified file from current directory on to the remote machine (linux) over SSH/SCP.
+   E.g. remote_copy.py -s my_test_file.txt -d /tmp -h 192.168.90.12 -u tuser -p tpass
+     -s: source file
+     -d: destination path on remote machine
+     -h: remote host
+     -u: remote username
+     -p: remote password
+   It should copy my_test_file.txt located in current directory to /tmp folder in remote machine with ip 192.168.90.12
+
+
