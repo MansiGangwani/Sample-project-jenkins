@@ -1,0 +1,26 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage("Checkout Code")
+        {
+            steps
+            {
+                script
+                {
+                    git branch: "python",
+                    credentialsId: 'my-credentials',
+                    url: 'https://github.com/MansiGangwani/Sample-project-jenkins.git'
+                }
+            }
+         }
+        stage('Python Program')
+        {
+            steps
+            {
+                sh 'python3 MaxNumber.py'
+            }
+        }
+    }
+}
