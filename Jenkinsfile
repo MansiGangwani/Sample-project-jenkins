@@ -3,6 +3,10 @@ pipeline
   agent any
   stages
   {
+    stage('Test')
+    {
+      echo 'testing'
+    }
     stage('Build Master')
     {
       when
