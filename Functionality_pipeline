@@ -1,0 +1,89 @@
+//@Library('shared-libs') _ 
+
+pipeline
+{
+    parameters
+    {
+		string(name: "name1",
+			defaultValue: "abc",
+			trim: true,
+			description: "name")
+		booleanParam(name: 'Refresh',
+            defaultValue: false,
+            description: 'Refresh Jenkinsfile and exit.Do Not enable this.')
+    }
+    environment
+    {
+        Job_name = "${params.name}" // Use the Jenkins-provided environment variable 
+    }
+    // agent any
+    agent {label 'azure-test'}
+    options
+    {
+          timeout(time: 5, unit: 'HOURS')
+    }
+    stages
+    {
+		stage('Parallel Execution') {
+            
+        parallel {
+        stage('Refresh Jenkinsfile') {
+                when { expression { return params.Refresh == true } }
+                steps {
+                    script {
+                        currentBuild.displayName = "Refresh"
+                    }
+               }
+          }
+		stage("test")
+        {
+            // agent { label 'linux-node' } // Run this stage on a Linux node
+         steps
+         {
+             script
+             {
+                println "BUILD_NUMBER:  ${BUILD_NUMBER}"
+                println "Job_name: ${Job_name}"
+				// withCredentials([usernamePassword(credentialsId: 'global-bitbucket-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        // sh "git clone https://$USERNAME:$PASSWORD@bitbucket.ilww.com:8443/scm/werfenos/genesisos-7k-versions vrepo"
+                    //}
+             }
+         }
+		 }
+         stage("Linux commands")
+        {
+         steps
+         {
+             script
+             {
+              sh """
+              #!/bin/bash
+              set -e
+              uptime
+            #   mkdir ${WORKSPACE}/OS
+            # cd ${WORKSPACE}/OS
+            #ping www.google.com
+            
+              """
+             }
+           }
+         }
+        }
+		}
+    }
+    post
+    {
+        always
+        {
+            println "always block"
+        }
+        success
+        {
+            println "Success Block"
+        }
+        failure
+        {
+            println "Failure Block"
+        }
+    }
+}
