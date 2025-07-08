@@ -1,0 +1,128 @@
+'''
+User based - choice parameter (Which fetches github tags)
+
+stage 1 - Print github tags of choice parameters
+
+stage 2 - workspace git clone
+if it cloned - Print data on console
+else trigger another pipeline(new-pipeline1) and print output of issue
+
+stage 3 -
+after cloning data in another stage - In that stage, slave node is attached
+Get python file from s3 bucket
+
+stage 4 -
+In another stage, if we got s3 bucket python file
+print output of that python file
+
+stage 5 - 
+else in above new-pipeline1, print output of that issue
+'''
+properties([
+    parameters([
+        string(name: 'GIT_REPO', defaultValue: 'https://github.com/MansiGangwani/Sample-project-jenkins.git', description: 'Git repo URL'),
+        gitParameter(
+            branchFilter: 'origin/(.*)',
+            defaultValue: 'main',
+            name: 'Git_Tag',
+            type: 'PT_TAG',
+            listSize: '30',
+            selectedValue: 'DEFAULT',
+            sortMode: 'ASCENDING_SMART',
+            description: 'Select a Git tag',
+            useRepository: '${GIT_REPO}'
+        ),
+        gitParameter(
+            branchFilter: 'origin/(.*)',
+            defaultValue: 'main',
+            name: 'Git_Branches',
+            type: 'PT_BRANCH',
+            listSize: '30',
+            selectedValue: 'DEFAULT',
+            sortMode: 'ASCENDING_SMART',
+            description: 'Select a Git tag',
+            useRepository: '${GIT_REPO}'
+        )
+    ])
+])
+node {
+        stage('Use Selected Tag') 
+        {
+            echo "Selected Git Tag: ${params.Git_Tag}"
+            echo "Git_Branches: ${params.Git_Branches}"
+        }
+        stage('Checkout to GitHub') 
+        {
+            echo 'Cleaning up workspace'
+            cleanWs()
+
+            def checkoutSuccess = true
+            def commitLog = ''
+
+            try {
+                checkout([
+                $class: 'GitSCM',
+                branches: [[name: "${params.Git_Tag}"]],
+                userRemoteConfigs: [[
+                    url: "${params.GIT_REPO}",
+                    //Validate with .git folder
+                    refspec: '+refs/tags/*:refs/remotes/origin/tags/*'
+                    ]]
+                ])
+
+                script {
+                    commitLog = sh(
+                        script: 'git log -1 --pretty=%B',
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Latest commit: ${commitLog}"
+
+                    if (commitLog.contains("Update")) {
+                       echo "Git checkout done"
+                    } else {
+                       error("Build failed because expected commit message was not found.")
+                      echo "Commit message was:\n${commitLog}"
+                    }
+
+                    // If params.EXPECTED_KEYWORD is truthy (i.e., not null or empty), use it. Otherwise, use the default value ("", an empty string).
+                    '''
+                    def expectedKeyword = params.EXPECTED_KEYWORD ?: ""
+                    echo "expectedKeyword: ${expectedKeyword}"
+
+                    if (expectedKeyword && !commitMessage.contains(expectedKeyword)) {
+                        error("Commit message validation failed. Expected keyword '${expectedKeyword}' not found.")
+                    }
+                    else{
+                        echo "Git checkout done"
+                    }
+                    '''
+                }
+            }
+            catch (Exception e) {
+                checkoutSuccess = false
+                def errorMessage = e.getMessage()
+                echo "Git checkout failed!"
+                echo "Error details: ${errorMessage}"
+
+                build job: 'new-pipeline1',
+                parameters: [
+                string(name: 'GIT_ERROR_MESSAGE', value: errorMessage)
+                ],
+                wait: false
+            }
+    }
+    stage('Cleanup') {
+        echo 'Cleaning up workspace'
+        cleanWs()
+    }
+}
+
+node ('azure-test')
+{
+    stage('Slave node')
+    {
+        echo 'Working in slave node workspace'
+        echo "Stage is running on slave node: ${NODE_NAME}"
+    }
+}
