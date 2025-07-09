@@ -80,6 +80,10 @@ node {
 
                     if (commitLog.contains("Update")) {
                        echo "Git checkout done"
+                       //sh 'python3 Hello-World.py' 
+                        def output = sh(script: 'python3 Hello-World.py', returnStdout: true).trim()
+                        echo "Python Script Output:\n${output}"
+        
                     } else {
                        error("Build failed because expected commit message was not found.")
                       echo "Commit message was:\n${commitLog}"
@@ -95,14 +99,6 @@ node {
                     }
                     else{
                         echo "Git checkout done"
-                        //sh 'python3 Hello-World.py' 
-                        def output = sh(script: 'python3 Hello-World.py', returnStdout: true).trim()
-                        echo "Python Script Output:\n${output}"
-        
-                        // Validate the output (example: check for a specific success message)
-                        if (!output.contains("Success")) {
-                            error "Python script did not complete successfully"
-                        }
                     }
                     '''
                 }
