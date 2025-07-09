@@ -95,6 +95,7 @@ node {
                     }
                     else{
                         echo "Git checkout done"
+                        sh 'python3 Hello-World.py' 
                     }
                     '''
                 }
@@ -136,6 +137,6 @@ node ('azure-test')
         //             refspec: '+refs/tags/*:refs/remotes/origin/tags/*'
         //             ]]
         // ])
-        sh 'Hello-World.py' 
+        //sh 'Hello-World.py' 
     }
 }
