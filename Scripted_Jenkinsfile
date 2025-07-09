@@ -124,5 +124,18 @@ node ('azure-test')
     {
         echo 'Working in slave node workspace'
         echo "Stage is running on slave node: ${NODE_NAME}"
+        
+    }
+    stage('Python file run')
+    {
+        checkout([
+                $class: 'GitSCM',
+                branches: [[name: "main"]],
+                userRemoteConfigs: [[
+                    url: "https://github.com/MansiGangwani/Python_Programs.git",
+                    refspec: '+refs/tags/*:refs/remotes/origin/tags/*'
+                    ]]
+        ])
+        sh 'Hello-World.py' 
     }
 }
