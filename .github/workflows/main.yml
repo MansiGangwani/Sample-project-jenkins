@@ -1,0 +1,22 @@
+name: Trigger on New Commits
+
+on:
+  push:
+    branches:
+      - '**' # This triggers the workflow on any branch. Replace with specific branch names if needed.
+
+jobs:
+  new-commit-job:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Print Commit Details
+
+        run: |
+          echo "New commit: github.refname"
+          echo "CommitMessage: {{github.event.head_commit.message}}"
+          echo "Commit author: ${{ github.event.head_commit.author.name }}"
