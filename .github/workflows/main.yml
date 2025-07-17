@@ -17,6 +17,6 @@ jobs:
       - name: Print Commit Details
 
         run: |
-          echo "New commit: ${{github.refname}}"
+          echo "New commit: ${{github.ref_name}}"
           echo "CommitMessage: ${{github.event.head_commit.message}}"
           echo "Commit author: ${{ github.event.head_commit.author.name }}"
